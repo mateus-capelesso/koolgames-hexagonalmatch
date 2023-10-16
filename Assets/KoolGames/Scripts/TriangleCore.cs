@@ -8,9 +8,11 @@ namespace KoolGames.Scripts
         
         private Renderer renderer;
         private ColorTypes color;
+        private Hexagon hexagonController;
         
-        public void SetColorType(int type)
+        public void SetColorType(int type, Hexagon hexagon)
         {
+            hexagonController = hexagon;
             color = (ColorTypes)type;
 
             GetMaterialCopy();
@@ -19,6 +21,7 @@ namespace KoolGames.Scripts
         private void OnMouseDown()
         {
             Debug.Log($"Mouse clicked on triangle");
+            hexagonController.HexagonClicked();
         }
 
         private void GetMaterialCopy()

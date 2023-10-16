@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 namespace KoolGames.Scripts
 {
@@ -8,7 +9,6 @@ namespace KoolGames.Scripts
         [SerializeField] private TriangleCore trianglePrefab;
 
         private TriangleCore[] triangles;
-        private Coroutine rotationCoroutine;
         private bool isRotating;
 
         private void Start()
@@ -16,7 +16,7 @@ namespace KoolGames.Scripts
             InitializeHexagon();
         }
 
-        private void InitializeHexagon()
+        public void InitializeHexagon()
         {
             triangles = new TriangleCore[6];
             
@@ -28,9 +28,9 @@ namespace KoolGames.Scripts
             
             for (int i = 0; i < colorTypes.Length; i++)
             {
-                TriangleCore triangle = Instantiate(trianglePrefab, Vector3.zero, Quaternion.Euler(-90f, angle, 0f), transform);
+                TriangleCore triangle = Instantiate(trianglePrefab, transform.position, Quaternion.Euler(-90f, angle, 0f), transform);
 
-                triangle.SetColorType(colorTypes[i]);
+                triangle.SetColorType(colorTypes[i], this);
                 triangles[i] = triangle;
 
                 angle += 60f;
@@ -42,13 +42,10 @@ namespace KoolGames.Scripts
             if (isRotating) return;
 
             isRotating = true;
-            rotationCoroutine = StartCoroutine(RotateHexagon());
-        }
-
-        private IEnumerator RotateHexagon()
-        {
-           float target = transform.rotation.eulerAngles.y + 60f;
-           yield return new WaitForEndOfFrame(); 
+            transform.DORotate(Vector3.up * 60f, 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
+            {
+                isRotating = false;
+            });
         }
     }
 }
