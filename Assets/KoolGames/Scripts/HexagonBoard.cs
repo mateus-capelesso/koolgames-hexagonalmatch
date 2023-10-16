@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 namespace KoolGames.Scripts
@@ -8,6 +9,7 @@ namespace KoolGames.Scripts
     {
         [SerializeField] private Hexagon hexagonPrefab;
 
+        private string seed;
         private int numberOfPieces = 8;
         private List<Vector3> availableSlots;
         private List<Vector3> occupiedSlots;
@@ -22,15 +24,27 @@ namespace KoolGames.Scripts
             new Vector3(-1.75f, 0, 3f)
         };
 
-        private void Start()
+        public void InitializeBoard(string seed, int level)
         {
+            this.seed = seed;
+            // Divide by 2 jus to get the int from the operation. Times 2 because we cannot have odd numbers
+            numberOfPieces = (level / 2 + 1) * 2;
+            
+            InitializeRandom();
             InstantiateBoard();
+        }
+
+        private void InitializeRandom()
+        {
+            Random.InitState(seed.GetHashCode());
         }
 
         private void InstantiateBoard()
         {
             availableSlots = new List<Vector3> { Vector3.zero };
             occupiedSlots = new List<Vector3>();
+
+            numberOfPieces = 4;
             
             for (int i = 0; i < numberOfPieces; i++)
             {
@@ -43,6 +57,27 @@ namespace KoolGames.Scripts
                 
                 CheckNewAvailableSlots();
             }
+
+            FixCameraPosition();
+        }
+
+        private void FixCameraPosition()
+        {
+            float width = occupiedSlots.Max(vector => vector.x) - occupiedSlots.Min(vector => vector.x);
+            float height = occupiedSlots.Max(vector => vector.z) - occupiedSlots.Min(vector => vector.z);
+            float averageWidth = occupiedSlots.Sum(vector => vector.x) / occupiedSlots.Count;
+            float averageHeight = occupiedSlots.Sum(vector => vector.z) / occupiedSlots.Count;
+            
+            Debug.Log($"x: {width}, y: {height}");
+
+            float y = width * 10 / 1.75f;
+            
+            if (height > 6f)
+            {
+                y = height * 10 / 5f;
+            }
+            
+            Camera.main.transform.localPosition = new Vector3(averageWidth, y, averageHeight);
         }
 
         private Vector3 GetRandomPosition()
