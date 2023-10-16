@@ -18,10 +18,23 @@ namespace KoolGames.Scripts
             GetMaterialCopy();
         }
 
+        public ColorTypes GetColorType()
+        {
+            return color;
+        }
+
         private void OnMouseDown()
         {
-            Debug.Log($"Mouse clicked on triangle");
             hexagonController.HexagonClicked();
+        }
+
+        public void NotifyPossibleMatch(ColorTypes hitColor)
+        {
+            
+            if (hitColor == color)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         private void GetMaterialCopy()
