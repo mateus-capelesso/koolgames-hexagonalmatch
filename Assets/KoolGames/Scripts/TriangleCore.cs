@@ -12,6 +12,7 @@ namespace KoolGames.Scripts
         private Renderer meshRenderer;
         private ColorTypes color;
         private Hexagon hexagonController;
+        private Material colorMaterial;
         
         
         public void SetColorType(int type, Hexagon hexagon)
@@ -41,10 +42,8 @@ namespace KoolGames.Scripts
 
         public void ProcessMatch()
         {
-            transform.DOScale(Vector3.zero, 1f).SetDelay(1f).SetEase(Ease.OutBack).OnComplete(() =>
-            {
-                gameObject.SetActive(false);
-            });
+            detection.BlockCollider();
+            colorMaterial.DOColor(Color.white, 1f);
         }
 
         public void IdentifyMatches()
@@ -60,8 +59,8 @@ namespace KoolGames.Scripts
             {
                 if (!string.Equals(meshRenderer.materials[i].name, $"Color (Instance)", StringComparison.InvariantCultureIgnoreCase)) continue;
 
-                Material material = meshRenderer.materials[i];
-                material.SetColor("_Color", GetColorByColorType());
+                colorMaterial = meshRenderer.materials[i];
+                colorMaterial.SetColor("_Color", GetColorByColorType());
                 
                 break;
             }

@@ -7,18 +7,25 @@ public class ColorDetection : MonoBehaviour
     [SerializeField] private TriangleCore triangle;
 
     private bool isDetecting;
+    private Coroutine detectionControl;
+    private bool blocked = false;
 
     public void EnableDetection()
     {
         isDetecting = true;
         // Debug.Log($"Enable detection");
 
-        // StartCoroutine(DeactivateDetection());
+        detectionControl = StartCoroutine(DeactivateDetection());
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void BlockCollider()
     {
-        if (!isDetecting) return;
+        blocked = true;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (!isDetecting || blocked) return;
         
         if(other.TryGetComponent<TriangleCore>(out TriangleCore matchTriangle))
         {
@@ -32,6 +39,8 @@ public class ColorDetection : MonoBehaviour
                 triangle.NotifyMatch();
                 matchTriangle.ProcessMatch();
                 triangle.ProcessMatch();
+                
+                StopCoroutine(detectionControl);
             }
         }
     }

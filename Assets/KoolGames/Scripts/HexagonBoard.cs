@@ -25,8 +25,7 @@ namespace KoolGames.Scripts
             new Vector3(-3.5f, 0f, 0f),
             new Vector3(-1.75f, 0, 3f)
         };
-
-        public event Action OnGameOver;
+        
         public event Action OnPlayerWin;
         public event Action OnMatchFound;
         
@@ -128,53 +127,7 @@ namespace KoolGames.Scripts
             {
                 Debug.Log($"No more colors left, Player win!");
                 OnPlayerWin?.Invoke();
-                return;
             }
-
-            CheckLoseCondition();
-        }
-        
-        private void CheckLoseCondition()
-        {
-            
-            for (int i = 0; i < hexagons.Count; i++)
-            {
-                List<ColorTypes> differenceBetweenNeighbors = new List<ColorTypes>();
-                
-                for (int j = 0; j < hexagons.Count; j++)
-                {
-                    if (i == j) continue;   // If same hexagon, we don't need to check it
-                    
-                    // If it's too far, isn't a neighbor, so they will never match
-                    float distance = Vector3.Distance(hexagons[i].transform.position, hexagons[j].transform.position);
-                    if (distance > 4f && missingMatches[hexagons[i].Id].Count > 0) continue;
-                    
-                    List<ColorTypes> colorsWithoutMatch = missingMatches[hexagons[i].Id].Except(missingMatches[hexagons[j].Id]).ToList(); // Get all colors without a match between the two neighbors
-
-                    // If all their colors match, we can continue to the next neighbor
-                    if (colorsWithoutMatch.Count < 1) continue;
-                    
-                    // If there's one color missing, let's check if there's another neighbor with that color, if not we will keep this color in the list
-                    bool hasMatch = colorsWithoutMatch.Select(type => type).Intersect(differenceBetweenNeighbors).Any();
-
-                    if (!hasMatch)
-                    {
-                        differenceBetweenNeighbors = differenceBetweenNeighbors.Union(colorsWithoutMatch).ToList();
-                    }
-                }
-
-                // Since we have a color without a match in any of its neighbors, the user will never be able to match it with another color... game over
-                if (differenceBetweenNeighbors.Count > 1)
-                {
-                    Debug.Log($"Hexagon {hexagons[i].gameObject.name} has a missing match. Game is Over!");
-                    OnGameOver?.Invoke();
-                    break;
-                }
-                
-                differenceBetweenNeighbors.Clear();
-            }
-            
-            missingMatches.Clear();
         }
     }
 }

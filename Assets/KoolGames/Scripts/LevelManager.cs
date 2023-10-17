@@ -26,7 +26,6 @@ public class LevelManager : MonoBehaviour
         board.InitializeBoard(seed, currentLevel);
 
         board.OnMatchFound += MatchFound;
-        board.OnGameOver += GameOver;
         board.OnPlayerWin += PlayerWin;
     }
 
@@ -51,7 +50,6 @@ public class LevelManager : MonoBehaviour
     private void ClearBoard()
     {
         board.OnMatchFound -= MatchFound;
-        board.OnGameOver -= GameOver;
         board.OnPlayerWin -= PlayerWin;
         
         Destroy(board.gameObject);
