@@ -32,8 +32,8 @@ namespace KoolGames.Scripts
             matchedTriangles = new List<TriangleCore>();
             neighbors = new List<Hexagon>();
             
-            int[] colorTypes = new int[]  { 0, 1, 2, 3, 4, 5 };
-            System.Random rnd = new System.Random();
+            int[] colorTypes = new int[] { 0, 1, 2, 3, 4, 5 };
+            System.Random rnd = new System.Random(LevelManager.Instance.GetSeed());
             rnd.Shuffle(colorTypes);
 
             float angle = 0f;

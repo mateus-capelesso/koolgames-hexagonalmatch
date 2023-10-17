@@ -8,8 +8,7 @@ namespace KoolGames.Scripts
     public class HexagonBoard : MonoBehaviour
     {
         [SerializeField] private Hexagon hexagonPrefab;
-
-        private string seed;
+        
         private int numberOfPieces = 8;
         private List<Vector3> availableSlots;
         private List<Vector3> occupiedSlots;
@@ -26,14 +25,9 @@ namespace KoolGames.Scripts
             new Vector3(-1.75f, 0, 3f)
         };
         
-        public event Action OnPlayerWin;
-        public event Action OnMatchFound;
-        public event Action OnPlayerLose;
-        
 
-        public void InitializeBoard(string seed, int level)
+        public void InitializeBoard(int level)
         {
-            this.seed = seed;
             // Divide by 2 jus to get the int from the operation. Times 2 because we cannot have odd numbers
             numberOfPieces = (level / 2 + 1) * 2;
             
@@ -43,7 +37,7 @@ namespace KoolGames.Scripts
 
         private void InitializeRandom()
         {
-            Random.InitState(seed.GetHashCode());
+            Random.InitState(LevelManager.Instance.GetSeed());
         }
 
         private void InstantiateBoard()
@@ -78,10 +72,7 @@ namespace KoolGames.Scripts
             float height = occupiedSlots.Max(vector => vector.z) - occupiedSlots.Min(vector => vector.z);
             float averageWidth = occupiedSlots.Sum(vector => vector.x) / occupiedSlots.Count;
             float averageHeight = occupiedSlots.Sum(vector => vector.z) / occupiedSlots.Count;
-            
-            Debug.Log($"x: {width}, y: {height}");
-
-            float y = width * 6 / 1.75f;
+            float y = width * 7 / 1.75f;
             
             if (height > 6f)
             {
@@ -115,8 +106,8 @@ namespace KoolGames.Scripts
         {
             int missingCount = 0;
             missingMatches = new Dictionary<int, List<ColorTypes>>();
-            
-            OnMatchFound?.Invoke();
+
+            LevelManager.Instance.MatchFound();
             
             foreach (Hexagon hex in hexagons)
             {
@@ -127,7 +118,7 @@ namespace KoolGames.Scripts
             if (missingCount == 0)
             {
                 Debug.Log($"No more colors left, Player win!");
-                OnPlayerWin?.Invoke();
+                LevelManager.Instance.PlayerWin();
             }
 
             CheckLoseCondition();
@@ -140,6 +131,7 @@ namespace KoolGames.Scripts
                 if (hexagon.CheckLoseCondition())
                 {
                     Debug.Log($"Game Lost");
+                    LevelManager.Instance.GameOver();
                     break;
                 }
             }
