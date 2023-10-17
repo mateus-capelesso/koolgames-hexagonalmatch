@@ -48,15 +48,11 @@ namespace KoolGames.Scripts
             hexagonController.HexagonClicked();
         }
 
-        public void NotifyMatch()
-        {
-            hexagonController.ColorMatch(this);
-        }
-
-        public void ProcessMatch()
+        public void ProcessMatch(bool activeHexagon)
         {
             detection.BlockCollider();
             colorMaterial.DOColor(Color.white, 1f);
+            hexagonController.ColorMatch(activeHexagon, this);
         }
 
         public void IdentifyMatches()

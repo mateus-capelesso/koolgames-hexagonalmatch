@@ -62,22 +62,26 @@ namespace KoolGames.Scripts
             if (isRotating) return;
 
             isRotating = true;
+            
+            foreach (TriangleCore triangle in triangles)
+            {
+                triangle.IdentifyMatches();
+            }
+            
             transform.DORotate(Vector3.up * 60f, 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
             {
                 isRotating = false;
-
-                foreach (TriangleCore triangle in triangles)
-                {
-                    triangle.IdentifyMatches();
-                }
             });
         }
 
-        public void ColorMatch(TriangleCore triangle)
+        public void ColorMatch(bool activeHexagon, TriangleCore triangle)
         {
             matchedTriangles.Add(triangle);
-
-            boardController.NewMatchFound();
+            if (activeHexagon)
+            {
+                boardController.NewMatchFound();
+            }
+            
         }
 
         public List<ColorTypes> CheckForMissingColors()
@@ -90,14 +94,16 @@ namespace KoolGames.Scripts
             List<ColorTypes> missingColors = CheckForMissingColors();
             List<ColorTypes> copy = new List<ColorTypes>(missingColors);
             
-            foreach(ColorTypes colorMissing in copy)
+            foreach(ColorTypes color in copy)
             {
-                foreach (Hexagon _ in neighbors.Where(neighbor => neighbor.CheckForMissingColors().Contains(colorMissing)))
+                foreach (var neighbor in neighbors)
                 {
-                    missingColors.Remove(colorMissing);
+                    if (neighbor.CheckForMissingColors().Contains(color))
+                    {
+                        missingColors.Remove(color);
+                    }
                 }
             }
-            
             
             return missingColors.Count > 0;
         }

@@ -24,10 +24,12 @@ public class EndPageUI : MonoBehaviour, IUIPage
 
     private void CallNewLevel()
     {
+        buttonComponent.transform.DOPunchScale(Vector3.one * -0.1f, 0.25f).SetEase(Ease.OutBack);
         Fade.Instance.FadeOut(() =>
         {
             LevelManager.Instance.InitiateLevel();
             Hide();
+            Fade.Instance.FadeIn();
         });
     }
 

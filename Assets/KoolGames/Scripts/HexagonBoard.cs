@@ -72,7 +72,7 @@ namespace KoolGames.Scripts
             float height = occupiedSlots.Max(vector => vector.z) - occupiedSlots.Min(vector => vector.z);
             float averageWidth = occupiedSlots.Sum(vector => vector.x) / occupiedSlots.Count;
             float averageHeight = occupiedSlots.Sum(vector => vector.z) / occupiedSlots.Count;
-            float y = width * 7 / 1.75f;
+            float y = width * 8 / 1.75f;
             
             if (height > 6f)
             {

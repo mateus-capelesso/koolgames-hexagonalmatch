@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private MenuPageUI menuPageUI;
     [SerializeField] private EndPageUI endPage;
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text scoreValue;
     
     private void Start()
     {
@@ -24,16 +25,18 @@ public class UIController : MonoBehaviour
         LevelManager.Instance.OnGameOver += SetLoseSequence;
         
         scoreText.gameObject.SetActive(false);
+        scoreValue.gameObject.SetActive(false);
     }
 
     private void StartGame()
     {
         scoreText.gameObject.SetActive(true);
+        scoreValue.gameObject.SetActive(true);
     }
 
     private void UpdateScore(int value)
     {
-        scoreText.text = $"Score: {value}";
+        scoreValue.text = $"{value}";
     }
 
     private void SetWinSequence()

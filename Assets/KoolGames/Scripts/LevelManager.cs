@@ -37,6 +37,7 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         currentLevel = HasLevelSaved() ? PlayerPrefs.GetInt(levelKey) : 0;
+        currentLevel = 0;
         totalScore = PlayerPrefs.HasKey(scoreKey) ? PlayerPrefs.GetInt(scoreKey) : 0;
     }
 
