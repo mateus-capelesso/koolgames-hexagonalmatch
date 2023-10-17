@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 namespace KoolGames.Scripts
@@ -8,17 +10,25 @@ namespace KoolGames.Scripts
     {
         [SerializeField] private TriangleCore trianglePrefab;
 
-        private TriangleCore[] triangles;
+        private List<TriangleCore> triangles;
+        private List<TriangleCore> matchedTriangles;
         private bool isRotating;
-
-        private void Start()
+        private HexagonBoard boardController;
+        private int id;
+        public int Id
         {
-            InitializeHexagon();
+            get
+            {
+                return id;
+            }
         }
 
-        public void InitializeHexagon()
+        public void InitializeHexagon(HexagonBoard board, int hexagonId)
         {
-            triangles = new TriangleCore[6];
+            id = hexagonId;
+            boardController = board;
+            triangles = new List<TriangleCore>();
+            matchedTriangles = new List<TriangleCore>();
             
             int[] colorTypes = new int[]  { 0, 1, 2, 3, 4, 5 };
             System.Random rnd = new System.Random();
@@ -31,7 +41,7 @@ namespace KoolGames.Scripts
                 TriangleCore triangle = Instantiate(trianglePrefab, transform.position, Quaternion.Euler(-90f, angle, 0f), transform);
 
                 triangle.SetColorType(colorTypes[i], this);
-                triangles[i] = triangle;
+                triangles.Add(triangle);
 
                 angle += 60f;
             }
@@ -45,7 +55,24 @@ namespace KoolGames.Scripts
             transform.DORotate(Vector3.up * 60f, 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
             {
                 isRotating = false;
+
+                foreach (TriangleCore triangle in triangles)
+                {
+                    triangle.IdentifyMatches();
+                }
             });
+        }
+
+        public void ColorMatch(TriangleCore triangle)
+        {
+            matchedTriangles.Add(triangle);
+
+            boardController.NewMatchFound();
+        }
+
+        public List<ColorTypes> CheckForMissingColors()
+        {
+            return triangles.Except(matchedTriangles).Select(triangle => triangle.GetColorType()).ToList();
         }
     }
 }

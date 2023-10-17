@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 namespace KoolGames.Scripts
 {
@@ -6,14 +7,19 @@ namespace KoolGames.Scripts
     {
         public ColorLibrary colors;
         
-        private Renderer renderer;
+        [SerializeField] private ColorDetection detection;
+        
+        private Renderer meshRenderer;
         private ColorTypes color;
         private Hexagon hexagonController;
+        
         
         public void SetColorType(int type, Hexagon hexagon)
         {
             hexagonController = hexagon;
             color = (ColorTypes)type;
+
+            gameObject.name = $"{color}";
 
             GetMaterialCopy();
         }
@@ -28,24 +34,33 @@ namespace KoolGames.Scripts
             hexagonController.HexagonClicked();
         }
 
-        public void NotifyPossibleMatch(ColorTypes hitColor)
+        public void NotifyMatch()
         {
-            
-            if (hitColor == color)
+            hexagonController.ColorMatch(this);
+        }
+
+        public void ProcessMatch()
+        {
+            transform.DOScale(Vector3.zero, 1f).SetDelay(1f).SetEase(Ease.OutBack).OnComplete(() =>
             {
                 gameObject.SetActive(false);
-            }
+            });
+        }
+
+        public void IdentifyMatches()
+        {
+            detection.EnableDetection();
         }
 
         private void GetMaterialCopy()
         {
-            renderer = GetComponent<MeshRenderer>();
+            meshRenderer = GetComponent<MeshRenderer>();
             
-            for (int i = 0; i < renderer.materials.Length; i++)
+            for (int i = 0; i < meshRenderer.materials.Length; i++)
             {
-                if (!string.Equals(renderer.materials[i].name, $"Color (Instance)", StringComparison.InvariantCultureIgnoreCase)) continue;
+                if (!string.Equals(meshRenderer.materials[i].name, $"Color (Instance)", StringComparison.InvariantCultureIgnoreCase)) continue;
 
-                Material material = renderer.materials[i];
+                Material material = meshRenderer.materials[i];
                 material.SetColor("_Color", GetColorByColorType());
                 
                 break;
