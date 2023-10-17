@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 namespace KoolGames.Scripts
@@ -15,6 +17,7 @@ namespace KoolGames.Scripts
         private Material colorMaterial;
         
         
+        
         public void SetColorType(int type, Hexagon hexagon)
         {
             hexagonController = hexagon;
@@ -23,6 +26,16 @@ namespace KoolGames.Scripts
             gameObject.name = $"{color}";
 
             GetMaterialCopy();
+        }
+
+        public Hexagon GetHexagon()
+        {
+            return hexagonController;
+        }
+
+        public void AssignNeighbor(Hexagon neighbor)
+        {
+            hexagonController.AssignNeighbor(neighbor);
         }
 
         public ColorTypes GetColorType()

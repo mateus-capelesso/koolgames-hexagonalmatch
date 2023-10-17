@@ -32,6 +32,8 @@ public class ColorDetection : MonoBehaviour
             ColorTypes otherColor = matchTriangle.GetColorType();
             ColorTypes color = triangle.GetColorType();
 
+            triangle.AssignNeighbor(matchTriangle.GetHexagon());
+
             if (color == otherColor)
             {
                 isDetecting = false;
@@ -48,7 +50,7 @@ public class ColorDetection : MonoBehaviour
     private IEnumerator DeactivateDetection()
     {
         yield return new WaitForSeconds(1.5f);
-        // Debug.Log($"Disable detection");
+    
         isDetecting = false;
     }
 }

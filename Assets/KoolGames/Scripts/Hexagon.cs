@@ -12,8 +12,9 @@ namespace KoolGames.Scripts
 
         private List<TriangleCore> triangles;
         private List<TriangleCore> matchedTriangles;
-        private bool isRotating;
+        private List<Hexagon> neighbors;
         private HexagonBoard boardController;
+        private bool isRotating;
         private int id;
         public int Id
         {
@@ -29,6 +30,7 @@ namespace KoolGames.Scripts
             boardController = board;
             triangles = new List<TriangleCore>();
             matchedTriangles = new List<TriangleCore>();
+            neighbors = new List<Hexagon>();
             
             int[] colorTypes = new int[]  { 0, 1, 2, 3, 4, 5 };
             System.Random rnd = new System.Random();
@@ -44,6 +46,14 @@ namespace KoolGames.Scripts
                 triangles.Add(triangle);
 
                 angle += 60f;
+            }
+        }
+
+        public void AssignNeighbor(Hexagon neighbor)
+        {
+            if (!neighbors.Exists(n => n.Id == neighbor.Id))
+            {
+                neighbors.Add(neighbor);
             }
         }
 
@@ -73,6 +83,23 @@ namespace KoolGames.Scripts
         public List<ColorTypes> CheckForMissingColors()
         {
             return triangles.Except(matchedTriangles).Select(triangle => triangle.GetColorType()).ToList();
+        }
+
+        public bool CheckLoseCondition()
+        {
+            List<ColorTypes> missingColors = CheckForMissingColors();
+            List<ColorTypes> copy = new List<ColorTypes>(missingColors);
+            
+            foreach(ColorTypes colorMissing in copy)
+            {
+                foreach (Hexagon _ in neighbors.Where(neighbor => neighbor.CheckForMissingColors().Contains(colorMissing)))
+                {
+                    missingColors.Remove(colorMissing);
+                }
+            }
+            
+            
+            return missingColors.Count > 0;
         }
     }
 }

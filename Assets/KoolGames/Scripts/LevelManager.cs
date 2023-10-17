@@ -15,6 +15,7 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         currentLevel = PlayerPrefs.HasKey(levelKey) ? PlayerPrefs.GetInt(levelKey) : 3;
+        currentLevel = 2;
         totalScore = PlayerPrefs.HasKey(scoreKey) ? PlayerPrefs.GetInt(scoreKey) : 0;
 
         InitiateLevel();
@@ -27,6 +28,7 @@ public class LevelManager : MonoBehaviour
 
         board.OnMatchFound += MatchFound;
         board.OnPlayerWin += PlayerWin;
+        board.OnPlayerLose += PlayerLose;
     }
 
     private void GameOver()
@@ -36,6 +38,13 @@ public class LevelManager : MonoBehaviour
     }
 
     private void PlayerWin()
+    {
+        ClearBoard();
+        currentLevel++;
+        SaveData();
+    }
+    
+    private void PlayerLose()
     {
         ClearBoard();
         currentLevel++;
@@ -51,6 +60,7 @@ public class LevelManager : MonoBehaviour
     {
         board.OnMatchFound -= MatchFound;
         board.OnPlayerWin -= PlayerWin;
+        board.OnPlayerLose -= PlayerLose;
         
         Destroy(board.gameObject);
     }

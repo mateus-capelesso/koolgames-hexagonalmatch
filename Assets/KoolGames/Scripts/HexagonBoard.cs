@@ -28,6 +28,7 @@ namespace KoolGames.Scripts
         
         public event Action OnPlayerWin;
         public event Action OnMatchFound;
+        public event Action OnPlayerLose;
         
 
         public void InitializeBoard(string seed, int level)
@@ -80,7 +81,7 @@ namespace KoolGames.Scripts
             
             Debug.Log($"x: {width}, y: {height}");
 
-            float y = width * 10 / 1.75f;
+            float y = width * 6 / 1.75f;
             
             if (height > 6f)
             {
@@ -127,6 +128,20 @@ namespace KoolGames.Scripts
             {
                 Debug.Log($"No more colors left, Player win!");
                 OnPlayerWin?.Invoke();
+            }
+
+            CheckLoseCondition();
+        }
+
+        private void CheckLoseCondition()
+        {
+            foreach (Hexagon hexagon in hexagons)
+            {
+                if (hexagon.CheckLoseCondition())
+                {
+                    Debug.Log($"Game Lost");
+                    break;
+                }
             }
         }
     }
